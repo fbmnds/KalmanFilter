@@ -53,24 +53,24 @@ let applyKalmanFilter<[<Measure>]'x,[<Measure>]'t> (kf: KalmanFilterState<'x,'t>
     // Discrete Kalman filter measurement update equations - Measurement Update ("Correct")
     // Calculate Kalman gain - Compute the Kalman gain
     //* Step 4 */
-    let s = kf.P.P_00 + kf.R
+    let s = P_00 + kf.R
     //* Step 5 */
-    let k_0 = kf.P.P_00 / s
-    let k_1 = kf.P.P_10 / s
+    let k_0 = P_00 / s
+    let k_1 = P_10 / s
 
     // Calculate angle and bias - Update estimate with measurement zk (newAngle)
     //* Step 3 */
     let y = xRaw - xHat
     //* Step 6 */
     xHat <- xHat + k_0 * y
-    xdotHat <- xdotHat + k_1 * y
+    xdotHat <- kf.xdot + k_1 * y
 
     // Calculate estimation error covariance - Update the error covariance
     //* Step 7 */
     P_00 <- P_00 * (1. - k_0)
     P_01 <- P_01 * (1. - k_0)
-    P_10 <- P_10 - k_1 * kf.P.P_00
-    P_11 <- P_11 - k_1 * kf.P.P_01
+    P_10 <- P_10 - k_1 * P_00
+    P_11 <- P_11 - k_1 * P_01
     
     let kfNew = 
         { Qx    = kf.Qx
@@ -105,8 +105,8 @@ let randomTrend2 = [for i in 0. .. 0.1 .. 10. -> i, sin i * cos i + rand()]
 let damp x = if x > 5. then 5. else if x < -5. then -5. else x
 
 let fillRandomKF kf (x: (float * float) list) (xdot: (float * float) list) = 
-    let A = Array.init 100 (fun i -> kf)
-    for i in 1 .. 101 do
+    let A = Array.init 101 (fun i -> kf)
+    for i in 1 .. 100 do
         A.[i] <- applyKalmanFilter<m,s> A.[i-1] (1.0<m>*(snd x.[i])) (1.0<m/s>*(snd xdot.[i]))
     A
 
@@ -116,7 +116,10 @@ let randomKF_x = [for i in 0 .. 100 -> (float i)/10., damp (float randomKF.[i].x
 let randomKF_xdot = [for i in 0 .. 100 -> (float i)/10., damp (float randomKF.[i].xdot)]
 
 type Chart = FSharpChart
-Chart.Combine [Chart.Line randomTrend1; Chart.Line randomTrend2; Chart.Line randomKF_x; Chart.Line randomKF_xdot ]
+Chart.Combine [ Chart.Line randomTrend1; Chart.Line randomTrend2; Chart.Line randomKF_x; Chart.Line randomKF_xdot ]
+Chart.Combine [ Chart.Line randomKF_x; Chart.Line randomKF_xdot ]
+Chart.Combine [ Chart.Line randomTrend1; Chart.Line randomKF_x ]
+Chart.Combine [ Chart.Line randomTrend2; Chart.Line randomKF_xdot ]
 
 
 
