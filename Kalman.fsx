@@ -62,10 +62,11 @@ let rand() = rnd.NextDouble()
 let randomTrend1 = [for i in 0.0 .. 0.1 .. 10.0 -> i, sin i + rand()]
 let randomTrend2 = [for i in 0.0 .. 0.1 .. 10.0 -> i, sin i * cos i + rand()]
 
-let randomKF = [for i in 0 .. 100 -> applyKalmanFilter<m,s> kf (1.0<m>*(snd randomTrend1.[i])) (1.0<m/s>*(snd randomTrend2.[i])) ]
-let randomKF_x = [for i in 0 .. 100 -> (float i)/10., (max (float randomKF.[i].x) 1.2)]
-let randomKF_xdot = [for i in 0 .. 100 -> (float i)/10., (max (float randomKF.[i].xdot) 1.2)]
+let damp x = if x > 5.0 then  5.0 else if x < -5.0 then -5.0 else x
 
+let randomKF = [for i in 0 .. 100 -> applyKalmanFilter<m,s> kf (1.0<m>*(snd randomTrend1.[i])) (1.0<m/s>*(snd randomTrend2.[i])) ]
+let randomKF_x = [for i in 0 .. 100 -> (float i)/10., (damp (float randomKF.[i].x))]
+let randomKF_xdot = [for i in 0 .. 100 -> (float i)/10., (damp (float randomKF.[i].xdot))]
 
 #load "FSharpChart.fsx"
 open MSDN.FSharp.Charting
