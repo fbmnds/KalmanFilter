@@ -59,7 +59,18 @@ let kf = setKalmanFilter<m,s> (Some 0.001<m/s>) (Some 0.003<m/(s*s*s)>) (Some 0.
 let rnd = System.Random()
 let rand() = rnd.NextDouble()
 
-let randomTrend1 = [for i in 0.0 .. 0.1 .. 10.0 -> sin i + rand()]
-let randomTrend2 = [for i in 0.0 .. 0.1 .. 10.0 -> sin i * cos i + rand()]
+let randomTrend1 = [for i in 0.0 .. 0.1 .. 10.0 -> i, sin i + rand()]
+let randomTrend2 = [for i in 0.0 .. 0.1 .. 10.0 -> i, sin i * cos i + rand()]
 
-let randomKF = [for i in 1 .. 100 -> applyKalmanFilter<m,s> kf (1.0<m>*randomTrend1.[i]) (1.0<m/s>*randomTrend2.[i]) ]
+let randomKF = [for i in 0 .. 100 -> applyKalmanFilter<m,s> kf (1.0<m>*(snd randomTrend1.[i])) (1.0<m/s>*(snd randomTrend2.[i])) ]
+let randomKF_x = [for i in 0 .. 100 -> (float i)/10., randomKF.[i].x]
+let randomKF_xdot = [for i in 0 .. 100 -> (float i)/10., randomKF.[i].xdot]
+
+
+#load "FSharpChart.fsx"
+open MSDN.FSharp.Charting
+
+type Chart = FSharpChart
+Chart.Combine [Chart.Line randomTrend1; Chart.Point randomTrend2; Chart.Point randomKF_x; Chart.Point randomKF_xdot]
+
+
