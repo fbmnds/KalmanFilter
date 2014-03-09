@@ -100,7 +100,7 @@ let rnd = System.Random()
 let rand() = rnd.NextDouble()
 
 let randomTrend1 = [for i in 0. .. 0.1 .. 10. -> i, sin i + rand()]
-let randomTrend2 = [for i in 0. .. 0.1 .. 10. -> i, sin i * cos i + rand()]
+let randomTrend2 = [for i in 0. .. 0.1 .. 10. -> i, cos i + rand()]
 
 let damp x = if x > 5. then 5. else if x < -5. then -5. else x
 
@@ -112,8 +112,8 @@ let fillRandomKF kf (x: (float * float) list) (xdot: (float * float) list) =
 
 let randomKF = fillRandomKF kf randomTrend1 randomTrend2
 
-let randomKF_x = [for i in 0 .. 100 -> (float i)/10., damp (float randomKF.[i].x)]
-let randomKF_xdot = [for i in 0 .. 100 -> (float i)/10., damp (float randomKF.[i].xdot)]
+let randomKF_x = [for i in 0 .. 100 -> (float i)/10., float randomKF.[i].x]
+let randomKF_xdot = [for i in 0 .. 100 -> (float i)/10., float randomKF.[i].xdot]
 
 type Chart = FSharpChart
 Chart.Combine [ Chart.Line randomTrend1; Chart.Line randomTrend2; Chart.Line randomKF_x; Chart.Line randomKF_xdot ]
