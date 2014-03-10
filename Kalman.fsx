@@ -122,5 +122,20 @@ Chart.Combine [ Chart.Line randomTrend1; Chart.Line randomKF_x ]
 Chart.Combine [ Chart.Line randomTrend2; Chart.Line randomKF_xdot ]
 
 
+let kf2 = 
+    { Qx    = 0.001<m/s>
+      Qxdot = 0.003<m/(s*s*s)>
+      R     = 0.03<m>
+      x     = 0.<m>
+      xdot  = 0.<m/s>
+      dt    = 0.1<s>
+      P     = P0 }
+let randomKF2 = fillRandomKF kf2 randomTrend1 randomTrend2
+let randomKF_x_2 = [for i in 0 .. 100 -> (float i)/10., float randomKF2.[i].x]
+let randomKF_xdot_2 = [for i in 0 .. 100 -> (float i)/10., float randomKF2.[i].xdot]
 
-
+type Chart2 = FSharpChart
+Chart2.Combine [ Chart2.Line randomTrend1; Chart2.Line randomTrend2; Chart2.Line randomKF_x_2; Chart2.Line randomKF_xdot_2 ]
+Chart2.Combine [ Chart2.Line randomKF_x_2; Chart2.Line randomKF_xdot_2 ]
+Chart2.Combine [ Chart2.Line randomTrend1; Chart2.Line randomKF_x_2 ]
+Chart2.Combine [ Chart2.Line randomTrend2; Chart2.Line randomKF_xdot_2 ]
