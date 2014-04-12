@@ -118,7 +118,7 @@ let randomKF_xdot = [for i in 0 .. 100 -> (float i)/10., float randomKF.[i].xdot
 type Chart = FSharpChart
 Chart.Combine [ Chart.Line randomTrend1; Chart.Line randomTrend2; Chart.Line randomKF_x; Chart.Line randomKF_xdot ]
 Chart.Combine [ Chart.Line randomKF_x; Chart.Line randomKF_xdot ]
-Chart.Combine [ Chart.Line randomTrend1; Chart.Line randomKF_x ]
+Chart.Combine [ Chart.Line randomTrend1; Chart.Line randomKF_x ]  /// overlay of unfiltered and filtered signal
 Chart.Combine [ Chart.Line randomTrend2; Chart.Line randomKF_xdot ]
 
 
@@ -137,5 +137,5 @@ let randomKF_xdot_2 = [for i in 0 .. 100 -> (float i)/10., float randomKF2.[i].x
 type Chart2 = FSharpChart
 Chart2.Combine [ Chart2.Line randomTrend1; Chart2.Line randomTrend2; Chart2.Line randomKF_x_2; Chart2.Line randomKF_xdot_2 ]
 Chart2.Combine [ Chart2.Line randomKF_x_2; Chart2.Line randomKF_xdot_2 ]
-Chart2.Combine [ Chart2.Line randomTrend1; Chart2.Line randomKF_x_2 ]
+Chart2.Combine [ Chart2.Line randomTrend1; Chart2.Line randomKF_x_2 ] /// overlay of unfiltered and filtered signal
 Chart2.Combine [ Chart2.Line randomTrend2; Chart2.Line randomKF_xdot_2 ]
